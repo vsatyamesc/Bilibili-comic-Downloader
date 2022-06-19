@@ -22,7 +22,7 @@ Example -
 You can get it from here -  
 ![SESSDAT GET](https://i.imgur.com/F5bCbi8.png)
 
-It should download the Image under New folder called "Comic" and the images will be under "Comic Name" and "Chapter Number"
+It should download the Image under New folder called "Comic" and the images will be under "Comic Name" and "Chapter Name"
 
 ## Windows Executable
 ### Requirements - 
@@ -41,4 +41,4 @@ You can get it from here -
 2. Run BiliBili Ripper.exe  
 3. Input the Chapter link  
 4. Input SESSDATA  
-5. It should download all the images of that chapter in a separate folder called Comic. Inside it will be Manga title and Chapter.  
+5. It should download all the images of that chapter in a separate folder called Comic. Inside it will be Manga title and Chapter Name.  
