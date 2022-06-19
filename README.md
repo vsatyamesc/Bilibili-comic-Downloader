@@ -24,8 +24,8 @@ It should download the Image under New folder called "Comic" and the images will
 
 ## Windows Executable
 ### Requirements - 
-Good Internet
-Microsoft Visual C++ Redistributable latest (Included in the Package)
+Good Internet And
+Microsoft Visual C++ Redistributable latest (Included in the Release Package)
 ### Get SESSDATA
 SESSDATA is found inside Cookies
 Example - 
