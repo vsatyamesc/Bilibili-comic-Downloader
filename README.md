@@ -1,5 +1,7 @@
 # Bilibili-comic-Downloader
-download Bilibili manga/comic images through Python or Windows Executable.
+download Bilibili manga/comic images through Python or Windows Executable.  
+Windows Executable File can be found in Release.
+
 ## For Python
 ### Requirements
 ```
