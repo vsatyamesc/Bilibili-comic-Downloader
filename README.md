@@ -5,8 +5,9 @@ download Bilibili manga/comic images through Python or Windows Executable.
 ```
 numpy==1.22.4
 requests==2.26.0
-
 ```
+you can install them by 
+> pip install -r requirements.txt
 
 ## How to Run
 Execute "bilibili.py" through
