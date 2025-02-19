@@ -33,8 +33,6 @@ SESSDATA is found inside Cookies
 Example -  
 ![SESSDATA Example](https://i.imgur.com/3zqgoqM.png)
 
-You can get it from here -   
-![SESSDAT GET](https://i.imgur.com/F5bCbi8.png)
 
 ### How To Run -
 1. Install the Microsoft Visual C++ Redistributable packages, Named - VC_redist.x64.exe, VC_redist.x86.exe  
