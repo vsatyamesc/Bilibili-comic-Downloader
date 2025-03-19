@@ -1,42 +1,20 @@
-# Bilibili-comic-Downloader (Has Stopped Working, will be archived till a working version is uploaded)
-download Bilibili manga/comic images through Python or Windows Executable.  
-Windows Executable File can be found in Release.
+# Bilibili-comic-Downloader
 
-## For Python
-### Requirements
-```
-numpy==1.22.4
-requests==2.26.0
-```
-you can install them by 
-> pip install -r requirements.txt
+As you might know, most of the code stopped working after they released the newest version of their website. Specifically, they added so many security measures that breaking them was a time taking task, so instead I made the browser download the images itself, so we don't have to break the security. Although some security measures were breached. Kudos to their security though, Simple javascript code to execute on **Web Developer Tools** was't working, even with a lot of code it wasn't working, the final method was to make the browser do itself, not the javascript code, so had to create the extension.
 
-### How to Run
-Execute "bilibili.py" through
-> python bilibili.py
+## Major Steps
+  1. You will have to install [Firefox Developer Edition](https://www.mozilla.org/en-US/firefox/developer/)
+  2. Now, in the address tab, put ```about:config```, accept everything. we are changing it so that you are able to install custom addons. look for ```xpinstall.signatures.required``` and set it to false, just press the buttons until false appears next to it. done, close it.
+  3. Install the addon from the release.
 
-Input chapter link and SESSDATA or Your Cookie
-Example -  
-![SESSDATA Example](https://i.imgur.com/3zqgoqM.png)
-
-You can get it from here -  
-![SESSDAT GET](https://i.imgur.com/F5bCbi8.png)
-
-It should download the Image under New folder called "Comic" and the images will be under "Comic Name" and "Chapter Name"
-
-## Windows Executable
-### Requirements - 
-Good Internet  
-Microsoft Visual C++ Redistributable latest (Included in the Release Package)  
-### Get SESSDATA  
-SESSDATA is found inside Cookies  
-Example -  
-![SESSDATA Example](https://i.imgur.com/3zqgoqM.png)
-
-
-### How To Run -
-1. Install the Microsoft Visual C++ Redistributable packages, Named - VC_redist.x64.exe, VC_redist.x86.exe  
-2. Run BiliBili Ripper.exe  
-3. Input the Chapter link  
-4. Input SESSDATA  
-5. It should download all the images of that chapter in a separate folder called Comic. Inside it will be Manga title and Chapter Name.  
+## Bilibili website steps
+  1. Login to Bilibili website.
+  2. Open the manhua chapter you want to download.
+  3. You need to make sure that the reading is set "Left to Right" and the Reader's only "Single" mode. Refer to the Screenshots below. If there's no HUD, hover on the lower region of the website.
+  4. After all is done, you need to slowly scroll the image slider such that all images are loaded, the again go to start of the page.
+  5. Run the extension and do nothing, it'll automate your browser so don't click or do anything meanwhile.
+  6. It'll download all images at once after it's finished.
+  
+![Step3 ref](docs/img3.png)
+![Step3 ref](docs/img4.png)
+![Step5 ref](docs/img5.png)
