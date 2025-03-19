@@ -12,7 +12,7 @@ As you might know, most of the code stopped working after they released the newe
   2. Open the manhua chapter you want to download.
   3. You need to make sure that the reading is set "Left to Right" and the Reader's only "Single" mode. Refer to the Screenshots below. If there's no HUD, hover on the lower region of the website.
   4. After all is done, you need to slowly scroll the image slider such that all images are loaded, the again go to start of the page.
-  5. Run the extension and do nothing, it'll automate your browser so don't click or do anything meanwhile.
+  5. Run the extension and do nothing, it'll automate your browser so don't click or do anything meanwhile. (it'll scroll the images)
   6. It'll download all images at once after it's finished.
   
 ![Step3 ref](docs/img3.png)
