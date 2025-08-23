@@ -1,4 +1,4 @@
-# Bilibili-comic-Downloader
+# Bilibili-comic-Downloader (As of 23 August 2025, the extension is not downloading all the images)
 
 As you might know, most of the code stopped working after they released the newest version of their website. Specifically, they added so many security measures that breaking them was a time taking task, so instead I made the browser download the images itself, so we don't have to break the security. Although some security measures were breached. Kudos to their security though, Simple javascript code to execute on **Web Developer Tools** was't working, even with a lot of code it wasn't working, the final method was to make the browser do itself, not the javascript code, so had to create the extension.
 
