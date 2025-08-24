@@ -1,6 +1,8 @@
 # Bilibili-comic-Downloader
 
 ### Check the Steps to use the Downloader. If the UIs aren't there for you, you can't download the manhua. This script was made to download the manhua the author wanted, this doesnt support all types of Images present on the website. Sometimes, if the image doesn't load in 10 seconds that may also cause the downloader to fail.
+### Issues
+- With the latest update to website, they are monitoring your website activity, and blocking the images if it is automated. This is stopping my downloader from working on Pay walled chapters that you bought.
 As you might know, most of the code stopped working after they released the newest version of their website. Specifically, they added so many security measures that breaking them was a time taking task, so instead I made the browser download the images itself, so we don't have to break the security. Although some security measures were breached. Kudos to their security though, Simple javascript code to execute on **Web Developer Tools** was't working, even with a lot of code it wasn't working, the final method was to make the browser do itself, not the javascript code, so had to create the extension.
 
 ## Major Steps
