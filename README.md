@@ -4,6 +4,8 @@
 ### Issues
 - With the latest update to website, they are monitoring your website activity, and blocking the images if it is automated. This is stopping my downloader from working on Pay walled chapters that you bought.
 As you might know, most of the code stopped working after they released the newest version of their website. Specifically, they added so many security measures that breaking them was a time taking task, so instead I made the browser download the images itself, so we don't have to break the security. Although some security measures were breached. Kudos to their security though, Simple javascript code to execute on **Web Developer Tools** was't working, even with a lot of code it wasn't working, the final method was to make the browser do itself, not the javascript code, so had to create the extension.
+- There are also bugs in the website response, apparently crashing the browser itself.
+- The response json are corrupted or are purposely done so? IDK
 
 ## Major Steps
   1. You will have to install [Firefox Developer Edition](https://www.mozilla.org/en-US/firefox/developer/)
