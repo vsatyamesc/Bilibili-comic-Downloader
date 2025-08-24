@@ -1,0 +1,125 @@
+// ==UserScript==
+// @name         Bilibili Comic Downloader
+// @namespace    http://tampermonkey.net/
+// @version      1.0
+// @description  Downloads bilibili manga chinese images
+// @match        https://manga.bilibili.com/*
+// @grant        GM_download
+// @grant        GM_xmlhttpRequest
+// @grant        unsafeWindow
+// @author       vsatyamesc
+// @source       https://github.com/vsatyamesc/Bilibili-comic-Downloader
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Add download button to the page
+    const btn = document.createElement('button');
+    btn.id = 'downloadChapterBtn';
+    btn.textContent = 'Download Chapter';
+    Object.assign(btn.style, {
+        position: 'fixed',
+        bottom: '20px',
+        left: '20px',
+        zIndex: 9999,
+        padding: '10px 20px',
+        backgroundColor: '#4CAF50',
+        color: 'white',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer'
+    });
+
+    btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        btn.textContent = 'Processing...';
+        try {
+            await processCanvasFrames();
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Download Chapter';
+        }
+    });
+
+    document.body.appendChild(btn);
+
+    async function processCanvasFrames() {
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        const waitForCanvasUpdate = async (canvas, previousDataURL) => {
+            for (let i = 0; i < 10; i++) {
+                const ctx = canvas.getContext('2d');
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+                const isCanvasNonBlack = imageData.data.some((value, index) =>
+                    index % 4 !== 3 && value > 0
+                );
+
+                if (isCanvasNonBlack) {
+                    const currentDataURL = canvas.toDataURL('image/png');
+                    if (currentDataURL !== previousDataURL) return currentDataURL;
+                }
+                await sleep(1000);
+            }
+            throw new Error("Canvas did not update within 10 seconds");
+        };
+
+        // Tab simulation (original extension logic structure)
+        const [tab] = await Promise.resolve([{
+            id: Math.random().toString(36).substr(2, 9),
+            url: window.location.href
+        }]);
+
+        if (!tab) throw new Error('No active tab found');
+
+        const rangeInput = document.querySelector('.range-input');
+        if (!rangeInput) throw new Error('Range input not found!');
+
+        const canvas = document.querySelector('canvas');
+        if (!canvas) throw new Error('Canvas not found!');
+
+        const min = parseInt(rangeInput.min, 10);
+        const max = parseInt(rangeInput.max, 10);
+        const dataURLs = [];
+        let previousDataURL = null;
+
+        for (let value = min; value <= max; value++) {
+            rangeInput.value = value;
+            rangeInput.dispatchEvent(new Event('input', { bubbles: true }));
+            rangeInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+            await sleep(1000);
+            try {
+                const newDataURL = await waitForCanvasUpdate(canvas, previousDataURL);
+                dataURLs.push(newDataURL);
+                previousDataURL = newDataURL;
+            } catch (err) {
+                console.error(`Value ${value} failed:`, err);
+                throw new Error(`Failed at value ${value}: ${err.message}`);
+            }
+        }
+
+        // Download images
+        for (const [index, dataURL] of dataURLs.entries()) {
+            const filename = `image-${index + min + 1}.png`;
+            try {
+                await new Promise((resolve, reject) => {
+                    GM_download({
+                        url: dataURL,
+                        name: filename,
+                        onload: resolve,
+                        onerror: reject
+                    });
+                });
+                console.log(`Downloaded: ${filename}`);
+            } catch (err) {
+                console.error(`Download failed for ${filename}:`, err);
+                throw new Error(`Failed to download ${filename}`);
+            }
+        }
+    }
+})();
