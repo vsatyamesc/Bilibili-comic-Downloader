@@ -1,6 +1,6 @@
 # Bilibili-comic-Downloader
 
-### Check the Steps to use the Downloader. If the UIs aren't there for you, you can't download the manhua. This is made to download only what the author wanted.
+### Check the Steps to use the Downloader. If the UIs aren't there for you, you can't download the manhua. This script was made to download the manhua the author wanted, this doesnt support all types of Images present on the website.
 As you might know, most of the code stopped working after they released the newest version of their website. Specifically, they added so many security measures that breaking them was a time taking task, so instead I made the browser download the images itself, so we don't have to break the security. Although some security measures were breached. Kudos to their security though, Simple javascript code to execute on **Web Developer Tools** was't working, even with a lot of code it wasn't working, the final method was to make the browser do itself, not the javascript code, so had to create the extension.
 
 ## Major Steps
