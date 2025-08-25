@@ -1,4 +1,4 @@
-# Bilibili-comic-Downloader
+# Bilibili-comic-Downloader ( Account Getting Banned Beware )
 
 ### Check the Steps to use the Downloader. If the UIs aren't there for you, you can't download the manhua. This script was made to download the manhua the author wanted, this doesnt support all types of Images present on the website. Sometimes, if the image doesn't load in 10 seconds that may also cause the downloader to fail.
 ### Issues
