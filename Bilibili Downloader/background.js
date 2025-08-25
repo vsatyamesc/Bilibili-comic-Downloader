@@ -1,113 +1,132 @@
-browser.browserAction.onClicked.addListener(async () => {
-  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+const pendingDownloads = new Map();
+const downloadQueue = [];
+let isDownloading = false;
 
-  if (tab) {
-    browser.tabs
-      .executeScript(tab.id, {
-        code: `
-          (async () => {
-            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+browser.browserAction.onClicked.addListener((tab) => {
+  downloadQueue.length = 0;
+  isDownloading = false;
+  pendingDownloads.clear();
 
-            // Function to wait for the canvas to update
-            const waitForCanvasUpdate = async (canvas, previousDataURL) => {
-              for (let i = 0; i < 10; i++) { // Max retries: 10 (10 seconds)
-                const canvas = document.querySelector('canvas');
-                const ctx = canvas.getContext("2d");
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  browser.tabs
+    .executeScript(tab.id, {
+      code: `
+      (async () => {
+        const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-                // Check if the canvas is not all black
-                const isCanvasNonBlack = imageData.data.some((value, index) => {
-                  // Ignore alpha channel (every fourth byte)
-                  return index % 4 !== 3 && value > 0;
-                });
-                  if(isCanvasNonBlack){
-                  const currentDataURL = canvas.toDataURL("image/png");
-                  if (currentDataURL !== previousDataURL) {
-                    return currentDataURL;
-                  }}
-                  
-                  await sleep(1000); // Poll every 1 second
-              }
-              throw new Error("Canvas did not update within the expected time.");
-            };
-
-            // Find the range input
-            const rangeInput = document.querySelector('.range-input');
-            if (!rangeInput) {
-              return { error: "No range input found on the page." };
-            }
-
-            // Get min and max values
-            const min = parseInt(rangeInput.min, 10);
-            const max = parseInt(rangeInput.max, 10);
-
-            // Collect Data URLs for each value
-            const canvas = document.querySelector('canvas');
-            if (!canvas) {
-              return { error: "No canvas found on the page." };
-            }
-
-            let previousDataURL = null;
-            const dataURLs = [];
-            for (let value = min; value <= max; value++) {
-              rangeInput.value = value; // Set the range input to the current value
-              rangeInput.dispatchEvent(new Event('input', { bubbles: true })); // Trigger input event
-              rangeInput.dispatchEvent(new Event('change', { bubbles: true })); // Trigger change event
-              await new Promise((resolve) => setTimeout(resolve, 1000));
-              try {
-                const newDataURL = await waitForCanvasUpdate(canvas, previousDataURL);
-                dataURLs.push(newDataURL);
-                previousDataURL = newDataURL; // Update previous DataURL
-              } catch (err) {
-                console.error(\`Failed at value \${value}: \`, err.message);
+        const waitForCanvasUpdate = async (canvas, previousDataURL) => {
+          for (let i = 0; i < 10; i++) {
+            const ctx = canvas.getContext("2d");
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const isCanvasNonBlack = imageData.data.some((val, idx) => idx % 4 !== 3 && val > 0);
+            if (isCanvasNonBlack) {
+              const currentDataURL = canvas.toDataURL("image/png");
+              if (currentDataURL !== previousDataURL && currentDataURL !== "data:,") {
+                return currentDataURL;
               }
             }
+            await sleep(1000);
+          }
+          throw new Error("Canvas did not update within the expected time.");
+        };
 
-            return { dataURLs, min, max };
-          })();
-        `,
-      })
-      .then((results) => {
-        if (results && results[0]) {
-          const { dataURLs, min, max } = results[0];
-          console.log(
-            `Collected ${dataURLs.length} Data URLs from range ${min} to ${max}`
-          );
+        const initialRangeInput = document.querySelector('.range-input');
+        if (!initialRangeInput) { return; }
 
-          // Loop over Data URLs and download each one
-          dataURLs.forEach((dataURL, index) => {
-            downloadImage(dataURL, `image-${index + min + 1}.png`);
-          });
-        } else {
-          console.error("No DataURLs received from content script.");
+        const curr_page = parseInt(initialRangeInput.value, 10);
+        let min = parseInt(initialRangeInput.min, 10); 
+        const max = parseInt(initialRangeInput.max, 10); 
+
+        if (curr_page >= min) {
+          min = curr_page;
         }
-      })
-      .catch((err) => {
-        console.error("Error executing script:", err);
-      });
+        let previousDataURL = null;
+
+        for (let value = min; value <= max; value++) {
+          try {
+            const rangeInput = document.querySelector('.range-input');
+            const canvas = document.querySelector('canvas');
+            if (!rangeInput || !canvas) { break; }
+
+            rangeInput.value = value;
+            rangeInput.dispatchEvent(new Event('input', { bubbles: true }));
+            rangeInput.dispatchEvent(new Event('change', { bubbles: true }));
+            await sleep(500);
+            const image_name = document.querySelector('.progress-indicator').innerText[0]
+
+            const newDataURL = await waitForCanvasUpdate(canvas, previousDataURL);
+            previousDataURL = newDataURL;
+
+            browser.runtime.sendMessage({
+              action: "downloadImage",
+              dataURL: newDataURL,
+              filename: \`image-\${image_name}.png\`
+            });
+            await sleep(200);
+
+          } catch (err) {
+            console.error(\`Failed at value \${value}: \`, err.message);
+          }
+        }
+      })();
+    `,
+    })
+    .catch((err) => console.error(err));
+});
+
+browser.runtime.onMessage.addListener((message) => {
+  if (message.action === "downloadImage") {
+    downloadQueue.push(message);
+    processQueue();
   }
 });
 
-// Function to download the image using the browser.downloads API
+browser.downloads.onChanged.addListener((delta) => {
+  if (
+    pendingDownloads.has(delta.id) &&
+    delta.state &&
+    delta.state.current === "complete"
+  ) {
+    const urlToRevoke = pendingDownloads.get(delta.id);
+    URL.revokeObjectURL(urlToRevoke);
+    pendingDownloads.delete(delta.id);
+  }
+});
+
 function downloadImage(dataURL, filename) {
-  fetch(dataURL)
+  return fetch(dataURL)
     .then((response) => response.blob())
-    .then((blob) => {
+    .then(async (blob) => {
       const objectURL = URL.createObjectURL(blob);
-      browser.downloads
-        .download({
+      try {
+        const downloadId = await browser.downloads.download({
           url: objectURL,
           filename: filename,
-          saveAs: false, // Automatically download without prompting
-        })
-        .then(() => {
-          console.log(`Image ${filename} downloaded successfully!`);
-        })
-        .catch((err) => {
-          console.error(`Download failed for ${filename}:`, err);
+          saveAs: false,
         });
-    })
-    .catch((err) => {
-      console.error("Error fetching the DataURL:", err);
+        pendingDownloads.set(downloadId, objectURL);
+        return downloadId;
+      } catch (error) {
+        URL.revokeObjectURL(objectURL);
+        throw error;
+      }
     });
+}
+
+async function processQueue() {
+  if (isDownloading || downloadQueue.length === 0) {
+    return;
+  }
+  isDownloading = true;
+  const nextDownload = downloadQueue.shift();
+  try {
+    await downloadImage(nextDownload.dataURL, nextDownload.filename);
+  } catch (err) {
+    console.error(
+      `Failed to process download for: ${nextDownload.filename}`,
+      err
+    );
+  } finally {
+    isDownloading = false;
+    processQueue();
+  }
 }
