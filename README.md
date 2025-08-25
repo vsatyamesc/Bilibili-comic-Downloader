@@ -1,6 +1,14 @@
-# Bilibili-comic-Downloader ( Account Getting Banned Beware )
-
-### Check the Steps to use the Downloader. If the UIs aren't there for you, you can't download the manhua. This script was made to download the manhua the author wanted, this doesnt support all types of Images present on the website. Sometimes, if the image doesn't load in 10 seconds that may also cause the downloader to fail.
+# Bilibili-comic-Downloader (Check New Version from Github Code)
+## Read the Whole ReadMe before downloading.
+### Notice
+- Their server is bugged for me or I'm banned I don't really know.
+- I've updated the extension, but I can't fully test it.
+- Images are save progressively but their name might be fucked up, but they will be in sequence. (e.g. Image-1, Image-3, Image-4, No Image-2 is not missing, the extension has wrongly named it, I've tried everything but can't fix it because its crashing my PC.
+- The above reason is why last page is not downloaded sometimes.
+- If last page isn't downloaded. Go to the page that is not downloaded and download it again.
+- Just set the Manga page to 1 (First) and start downloading.
+- If the image doesn't load from server, it can't be downloaded.
+- 
 ### Issues
 - With the latest update to website, they are monitoring your website activity, and blocking the images if it is automated. This is stopping my downloader from working on Pay walled chapters that you bought.
 As you might know, most of the code stopped working after they released the newest version of their website. Specifically, they added so many security measures that breaking them was a time taking task, so instead I made the browser download the images itself, so we don't have to break the security. Although some security measures were breached. Kudos to their security though, Simple javascript code to execute on **Web Developer Tools** was't working, even with a lot of code it wasn't working, the final method was to make the browser do itself, not the javascript code, so had to create the extension.
